@@ -52,8 +52,22 @@ public class StudentServlet extends HttpServlet {
             case "/students/new":
                 insertStudent(request, response);
                 break;
+            case "/students/delete":
+                deleteStudent(request, response);
         }
 
+    }
+
+    private void deleteStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // get Id
+        Long id = Long.parseLong(request.getParameter("id"));
+
+        // delete
+        service.deleteStudent(id);
+
+        // show table
+        response.sendRedirect("/students");
     }
 
     private void insertStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
