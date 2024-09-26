@@ -16,6 +16,8 @@ import java.util.Map;
         "/students",
         "/students/new",
         "/students/insert",
+        "/students/edit",
+        "/students/update",
         "/students/delete"
 })
 public class StudentServlet extends HttpServlet {
@@ -56,10 +58,56 @@ public class StudentServlet extends HttpServlet {
             case "/students/insert":
                 insertStudent(request, response);
                 break;
+            case "/students/edit":
+                editStudent(request, response);
+                break;
+            case "/students/update":
+                updateStudent(request, response);
+                break;
             case "/students/delete":
                 deleteStudent(request, response);
                 break;
         }
+
+    }
+
+    private void updateStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // read info from form
+        Student student = getStudentFromForm(request);
+
+        // update list of students
+        service.updateStudent(student);
+
+        // back to table
+        response.sendRedirect("/students");
+
+    }
+
+    private Student getStudentFromForm(HttpServletRequest request) {
+        // read student info from form
+        Long id = Long.parseLong(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+
+        // new student
+        return new Student(id, name, email, phone);
+    }
+
+    private void editStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // load student to form
+        // get student id
+        Long id = Long.parseLong(request.getParameter("id"));
+
+        // get student by id
+        Student student = service.getStudentById(id);
+
+        // send info to form
+        request.setAttribute("student", student);
+        request.getRequestDispatcher("/view/updateStudentForm.jsp")
+                .forward(request, response);
 
     }
 
@@ -84,13 +132,7 @@ public class StudentServlet extends HttpServlet {
     private void insertStudent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // read student info from form
-        Long id = Long.parseLong(request.getParameter("id"));
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-
-        // new student
-        Student student = new Student(id, name, email, phone);
+        Student student = getStudentFromForm(request);
 
         // add to list
         service.addStudent(student);

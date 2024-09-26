@@ -28,4 +28,18 @@ public class StudentDao {
 
         students.add(student);
     }
+
+    public Student getStudentById(Long id) {
+
+        return students.stream()
+                .filter(student -> student.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void updateStudent(Student student) {
+
+        // students.set(index, student)
+        students.set(students.indexOf(getStudentById(student.getId())), student);
+    }
 }
