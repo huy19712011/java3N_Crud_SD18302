@@ -1,10 +1,19 @@
 package com.example.java3n_crud_sd18302.repository;
 
 import com.example.java3n_crud_sd18302.entity.Student;
+import com.example.java3n_crud_sd18302.jdbc.DatabaseConnectionManager;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class StudentDao {
+
+    private static DatabaseConnectionManager dcm =
+            new DatabaseConnectionManager("test1", "sa", "123456");
+
 
     // fake data
     private static ArrayList<Student> students = new ArrayList<>();
@@ -16,7 +25,48 @@ public class StudentDao {
 
     public ArrayList<Student> getStudents() {
 
-        return students;
+        ArrayList<Student> students1 = new ArrayList<>();
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            connection = dcm.getConnection();
+
+            String sql = """
+                        SELECT * FROM students;
+                    """;
+            preparedStatement = connection.prepareStatement(sql);
+            //preparedStatement.setLong(1, 1001L);
+            //preparedStatement.setString(2, "student 1");
+            //preparedStatement.setString(3, "email 1");
+            //preparedStatement.setString(4, "phone 1");
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                Student student = new Student();
+                student.setId(resultSet.getLong("id"));
+                student.setName(resultSet.getString("name"));
+                student.setEmail(resultSet.getString("email"));
+                student.setPhone(resultSet.getString("phone"));
+
+                students1.add(student);
+            }
+
+            System.out.println("done...");
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            dcm.close(resultSet, preparedStatement, connection);
+        }
+
+
+        return students1;
     }
 
     public void deleteStudent(Long id) {
