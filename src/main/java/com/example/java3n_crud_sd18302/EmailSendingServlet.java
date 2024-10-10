@@ -21,8 +21,9 @@ public class EmailSendingServlet extends HttpServlet {
 
         String host = "smtp.gmail.com";
         String port = "587";
-        String user = "huynq1971@gmail.com";
-        String pass = "ijad faab nloe qouu";
+        String user = "";
+        String pass = "";
+        //https://security.google.com/settings/security/apppasswords
 
         String recipient = request.getParameter("recipient");
         String subject = request.getParameter("subject");
